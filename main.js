@@ -167,7 +167,7 @@ function renderCard(books) {
           <p id="publishedDate" alt="">Date: ${publishedDate}</p>
           <p id="categories" alt="">Genre: ${categories}</p>
           <div class="buy-container">
-          <a href="" id="link" class="btn buttons" target="_blank">
+          <a href="https://www.bookdepository.com/" id="link" class="btn buttons" target="_blank">
             Buy here
           </a>
           </div>
