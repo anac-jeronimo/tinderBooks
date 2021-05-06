@@ -92,8 +92,6 @@ function prepareData(googleData) {
   renderCard(books); // evoca a renderCard, passando como parametro o meu array de books, metodo que renderiza as cards
 }
 
-
-
 $("#search-btn").click(function () {
   let queryParam = $("#user-input").val();
   if (queryParam != null || queryParam != "") {
@@ -161,11 +159,14 @@ function renderCard(books) {
         <div class="card-body">
           <p class="card-title" alt="">Title: ${title}</p>
           <p id="author" alt="">Author: ${authors}</p>
+         
+          <p id="publishedDate" alt="">Date: ${publishedDate} </p>
+          <p id="categories" alt="">Genre: ${categories}</p>
+           <div class="description-scroll">
           <p id="description" alt=""> Description: 
             ${description}
-          </p>
-          <p id="publishedDate" alt="">Date: ${publishedDate}</p>
-          <p id="categories" alt="">Genre: ${categories}</p>
+          </p>  
+          </div>
           <div class="buy-container">
           <a href="https://www.bookdepository.com/" id="link" class="btn buttons" target="_blank">
             Buy here
@@ -203,12 +204,14 @@ let wishListBooks = [];
 //End of Classes//
 //Wishlist Functions//
 $("#wishlist-anchor").click(function () {
+  // esconde a classcard-wrapper, mostra a tabela onclick na ancora whishlist
   renderWishlist(wishListBooks);
   $("#wishlist-space").removeClass("display-none");
   $("#card-wrapper").addClass("display-none");
 });
 
 function renderWishlist(wishListBooks) {
+  //se houver livros na whishlist,itera pelo array e faz render da tabela com as propriedades escolhidas
   $(".clear-book").remove();
   if (wishListBooks.length) {
     wishListBooks.forEach((book) => {
@@ -231,9 +234,11 @@ function renderWishlist(wishListBooks) {
 }
 
 function removeBook(removeBtn) {
+  //remove livros da whishlist on button click
   console.log(removeBtn.val);
-  wishListBooks.splice(removeBtn.val, 1);
-  renderWishlist(wishListBooks);
+  let indexToRemove = removeBtn.value;
+  wishListBooks.splice(indexToRemove, 1);
+  renderWishlist(wishListBooks); //volta  fazer render ta tabela com os restantes livros
 }
 
 $("#wishlist-anchor").click(function () {
@@ -273,14 +278,13 @@ function displayBackToTopBtn() {
   }
 }
 
-$("#logo").click(function() {
+$("#logo").click(function () {
   $("#user-input").val("");
-    $("#whishlist-wrapper").addClass("d-none");
-    $("#tinder-wrapper").removeClass("d-none");
-   
-})
+  $("#whishlist-wrapper").addClass("d-none");
+  $("#tinder-wrapper").removeClass("d-none");
+});
 
-$("#logout").click(function() {
+$("#logout").click(function () {
   $("#username-input").val("");
   $("#password-input").val("");
 });

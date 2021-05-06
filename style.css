@@ -204,6 +204,11 @@ li {
   text-align: center;
 }
 
+.description-scroll{
+  height: 140px;
+  overflow-y:scroll;
+}
+
 
 #user-input {
     outline: brown !important;
@@ -265,7 +270,6 @@ position: relative;
 }
 #back-to-top::after {
   content: "\f077";
-  font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
   font-size: 2em;
@@ -326,3 +330,17 @@ position: relative;
   padding: 3.5vh;
 }
 /* FOOTER */
+
+html {
+overflow: scroll;
+overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+width: 0px; 
+background: transparent;  
+}
+
+#link{
+  margin-top: 8vh;
+}
