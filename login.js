@@ -2,6 +2,13 @@ currentUser = {};
 
 function setCurrentUser(user) {
   currentUser = user;
+  if(user.hasOwnProperty('books')){
+      if(user.books.length){
+        user.books.forEach((book) =>{
+          wishListBooks.push(book);
+        });
+    }
+  }
   stateView();
 }
 
@@ -15,21 +22,6 @@ function inputEnter(event, input) {
       getBooksFromGoogle();
     }
   }
-}
-
-function stateView() {
-  if (currentUser.id != undefined) {
-    $("#login").addClass("d-none");
-    $("#main").removeClass("d-none");
-    updateHeader();
-  } else {
-    $("#login ").removeClass("d-none");
-    $("#main ").addClass("d-none");
-  }
-}
-
-function updateHeader() {
-  $("#currentUsername").html(`Welcome ${currentUser.username}`);
 }
 
 function getUserByUsername() {
@@ -46,6 +38,23 @@ function getUserByUsername() {
       console.error("Erro : ", err);
     });
 }
+
+
+function stateView() {
+  if (currentUser.id != undefined) {
+    $("#login").addClass("d-none");
+    $("#main").removeClass("d-none");
+   // updateHeader();
+  } else {
+    $("#login ").removeClass("d-none");
+    $("#main ").addClass("d-none");
+  }
+}
+
+/* function updateHeader() {
+  $("#currentUsername").html(`Welcome ${currentUser.username}`);
+} */
+
 
 function addUser(username) {
   let tempUser = {
@@ -84,9 +93,12 @@ function updateUserById() {
   });
 }
 
-function addBook() {
+
+function addBook(index) {
   let tempBook = {
-    name: $("#bookName ").val(),
+    title: $("#bookName ").html(),
+    authors: $("#authors").html(),
+    publishedDate: $("#publishedDate").html(),
   };
   $.post(
     "https://upacademytinder.herokuapp.com/api/users/" +
@@ -95,12 +107,26 @@ function addBook() {
     tempBook
   )
     .done((data) => {
+      if(data.hasOwnProperty("id")) {
+        wishListBooks[index].id = data.id;
+      }
       console.log(data);
     })
     .fail((err) => {
       console.error("Erro : ", err);
     });
 }
+
+function deleteBookById(book){
+  $.ajax({
+    url: "https://upacademytinder.herokuapp.com/api/users/"+ currentUser.id + "/books/"+ book.id,
+    type: "DELETE",
+    success: () => {
+      console.log("success");
+    },
+  });
+}
+
 
 function getBooksFromGoogle() {
   console.log("getBooksFromGoogle function", $("#h-search").val());
@@ -110,8 +136,6 @@ function logout() {
   currentUser = {};
   stateView();
 }
-
-$("form").submit();
 
 
 stateView();

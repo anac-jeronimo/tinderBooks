@@ -8,7 +8,9 @@ let loggedIn = false;
 //End Of Properties//
 //Classes//
 class Book {
+  id = "";   
   constructor(
+    googleBookId,
     title,
     categories,
     authors,
@@ -18,6 +20,7 @@ class Book {
     //imageLinks,
     smallThumbnail
   ) {
+    this.googleBookId = googleBookId; 
     this.title = title;
     this.categories = categories;
     this.authors = authors;
@@ -49,7 +52,7 @@ function getDataFromGoogleBooksAPI(queryParameter) {
       console.log(googleError);
     });
 }
-/*    OLD FUNCTION, tryed to refactor (1) */
+
 function prepareData(googleData) {
   //admitindo que há resposta(linha 36), esta funçao é evocada e recebe o array de items
   for (const googleBook of googleData) {
@@ -78,6 +81,7 @@ function prepareData(googleData) {
     }
 
     let book = new Book( //cria uma nova instancia da classe Book, evoca o construtor por parametros, e passa'lhe como parametros o que está no livro iterado(googleBook)
+      googleBook.id,    //book id
       googleBook.volumeInfo.title,
       googleBook.volumeInfo.categories,
       googleBook.volumeInfo.authors,
@@ -91,6 +95,7 @@ function prepareData(googleData) {
   }
   renderCard(books); // evoca a renderCard, passando como parametro o meu array de books, metodo que renderiza as cards
 }
+
 
 $("#search-btn").click(function () {
   let queryParam = $("#user-input").val();
@@ -106,13 +111,18 @@ $("#disliked-book").click(function () {
 });
 
 $("#liked-book").click(function () {
-  wishListBooks.push(books[index]); //faz push do meu livro no index actual para o array whishListBooks
+  //faz push para a api
+  let insertedBookIndex = wishListBooks.push(books[index]) - 1; //faz push do meu livro no index actual para o array whishListBooks
+ 
+  addBook(insertedBookIndex);
+
   index++; //incrementa o iterador, para que na proxima evocação de renderCard, o iterador corresponda ao proximo livro, e não ao actual(sendo o actual o que eu mandei para a whishListBooks)
   renderCard(books);
 });
 
 function renderCard(books) {
   //função que faz render das cards, recebendo como argumento o meu array books
+  let googleBookId = "";
   let image; //variavel auxiliar para guardar o que está na propriedade thumbnail/smallThumbnail do book no index actual
   let title = "No Title Available";
   let authors = "No Author Available";
@@ -146,6 +156,9 @@ function renderCard(books) {
   } else {
     image = "LeatherCover.jpg";
   }
+  if(typeof books[index].googleBookId !== "undefined") {
+    googleBookId = books[index].googleBookId;
+  }
 
   //renderização das sections
   $(".left").append(
@@ -155,10 +168,9 @@ function renderCard(books) {
   );
   $(".right").append(
     `
-
-        <div class="card-body">
-          <p class="card-title" alt="">Title: ${title}</p>
-          <p id="author" alt="">Author: ${authors}</p>
+    <div class="card-body">
+          <p id="bookName" class="card-title" alt="">Title: ${title}</p>
+          <p id="authors" alt="">Author: ${authors}</p>
          
           <p id="publishedDate" alt="">Date: ${publishedDate} </p>
           <p id="categories" alt="">Genre: ${categories}</p>
@@ -168,7 +180,7 @@ function renderCard(books) {
           </p>  
           </div>
           <div class="buy-container">
-          <a href="https://www.bookdepository.com/" id="link" class="btn buttons" target="_blank">
+         <a href="https://books.google.pt/books?id=${googleBookId}" id="link" class="btn buttons" target="_blank">
             Buy here
           </a>
           </div>
@@ -237,6 +249,7 @@ function removeBook(removeBtn) {
   //remove livros da whishlist on button click
   console.log(removeBtn.val);
   let indexToRemove = removeBtn.value;
+  deleteBookById(wishListBooks[indexToRemove]);
   wishListBooks.splice(indexToRemove, 1);
   renderWishlist(wishListBooks); //volta  fazer render ta tabela com os restantes livros
 }
